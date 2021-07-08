@@ -19,7 +19,7 @@ test_step_size = 0.001
 num_epochs = 100
 num_train = 46000
 batch_size = 1000
-pretrained = '../models/20210704-153631/epoch_10.pth'
+pretrained = '../models/20210706-132711/epoch_400.pth'
 
 def main():
     lcf_model = builder.NewNet(test_step_size, p=.0)
