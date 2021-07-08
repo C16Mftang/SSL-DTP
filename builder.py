@@ -75,6 +75,9 @@ class NetBP(nn.Module):
         elif loss == 'Hinge':
             self.criterion = losses.SSHingeLoss(loss_param['margin_pos'], loss_param['margin_neg'], 
                                                 batch_size=batch_size, device=device)
+        elif loss == 'Barlow':
+            self.criterion = losses.BarlowTwinsLoss(loss_param['lambda'], loss_param['scale'], 
+                                                    batch_size=batch_size, device=device)
 
     def forward(self, x):
         """
@@ -144,8 +147,11 @@ class NetDTP(nn.Module):
         elif loss == 'SimCLR':
             self.global_criterion = losses.SimCLRLoss(tau=loss_param['tau'], batch_size=batch_size, device=device)
         elif loss == 'Hinge':
-            self.criterion = losses.SSHingeLoss(loss_param['margin_pos'], loss_param['margin_neg'], 
+            self.global_criterion = losses.SSHingeLoss(loss_param['margin_pos'], loss_param['margin_neg'], 
                                                 batch_size=batch_size, device=device)
+        elif loss == 'Barlow':
+            self.global_criterion = losses.BarlowTwinsLoss(loss_param['lambda'], loss_param['scale'], 
+                                                    batch_size=batch_size, device=device)
         # local loss
         self.local_criterion = nn.MSELoss()
 

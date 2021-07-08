@@ -137,3 +137,9 @@ def plug_in(x_in, perturb, trans, s_factor, h_factor, bsz, device):
         x_all[2*i] = x_out2[i]
         x_all[2*i+1] = x_out[i]
     return x_all
+
+def off_diagonal(x):
+    """return a flattened view of the off-diagonal elements of a square matrix"""
+    n, m = x.shape
+    assert n == m
+    return x.flatten()[:-1].view(n - 1, n + 1)[:, 1:].flatten()

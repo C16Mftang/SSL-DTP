@@ -2,9 +2,13 @@ import torch
 import torch.nn.functional as F
 import torch.nn as nn
 
+from utils import off_diagonal
+
 class SimCLRLoss(nn.Module):
     """
     The NT-Xent loss used in https://arxiv.org/abs/2002.05709
+    Inputs:
+        tau: temperature parameter
     """
     def __init__(self, tau, batch_size, device):
         super(SimCLRLoss, self).__init__()
@@ -45,7 +49,7 @@ class SimCLRLoss(nn.Module):
 class SSHingeLoss(nn.Module):
     """
     The contrastive hinge loss, which requires no normalization
-    Input:
+    Inputs:
         margin_pos: the margin used for selecting hard positives
         margin_neg: the margin used for selection hard negatives
     """
@@ -97,11 +101,36 @@ class SSHingeLoss(nn.Module):
         loss = torch.mean(pos_dist + neg_dist)
         return loss
 
+class BarlowTwinsLoss(nn.Module):
+    """
+    The Barlow Twins loss used in https://arxiv.org/abs/2103.03230
+    Inputs:
+        lambd: a weighing hyper-parameter between diagonal and off-diagonal entries
+        scale: a rather mysterious hyper-parameter not explained well in the paper
+    """
+    def __init__(self, lambd, scale, batch_size, device):
+        super(BarlowTwinsLoss, self).__init__()
+        self.batch_size = batch_size
+        self.device = device
+        self.lambd = lambd
+        self.scale = scale
+        self.bn = nn.BatchNorm1d(64, affine=False, track_running_stats=True)
+
+    def forward(self, X):
+        x1 = X[::2]
+        x2 = X[1::2]
+
+        # empirical cross-correlation matrix
+        c = self.bn(x1).T @ self.bn(x2)
+        c.div_(self.batch_size)
+
+        on_diag = torch.diagonal(c).add_(-1).pow_(2).sum().mul(self.scale)
+        off_diag = off_diagonal(c).pow_(2).sum().mul(self.scale)
+        loss = on_diag + self.lambd * off_diag
+        return loss
+
 class NaiveLoss(nn.Module):
-    """
-    A naive self-supervised loss that only computes 
-    the distances between positive pairs
-    """
+    """A naive self-supervised loss that only computes the distances between positive pairs"""
     def __init__(self, batch_size, device):
         super(NaiveLoss, self).__init__()
         self.batch_size = batch_size
