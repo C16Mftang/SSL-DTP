@@ -34,7 +34,7 @@ trans = ["aff"]
 s_factor = 4
 h_factor = 0.2
 resume = ''
-SS_loss = 'SimCLR'
+SS_loss = 'Hinge'
 learning_rule = 'backprop'
 
 def main():
