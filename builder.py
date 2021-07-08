@@ -50,7 +50,12 @@ class NewNet(nn.Module):
         return loss, correct
 
 class NetBP(nn.Module):
-    """The base encoder net trained with BP, for CIFAR"""
+    """
+    The base encoder net trained with BP, for CIFAR
+    Inputs:
+        step_size: learning rate for backprop
+        loss_param: hyper-parameters for different SS losses
+    """
     def __init__(self, batch_size, step_size, device, loss_param, p=0., loss='SimCLR'):
         super(NetBP, self).__init__()
         self.batch_size = batch_size
@@ -98,6 +103,7 @@ class NetDTP(nn.Module):
     Input:
         step_size1: learning rate for the layer-wise autoencoders in TP
         step_size2: learning rate for training the feedforward weights
+        loss_param: hyper-parameters for different SS losses
         sigma: std of noise added to train the layer-wise auto-encoders
         lr_targ: learning rate used to compute the first (top-layer) target
     
