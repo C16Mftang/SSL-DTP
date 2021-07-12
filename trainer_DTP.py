@@ -38,7 +38,7 @@ s_factor = 4
 h_factor = 0.2
 resume = ''
 SS_loss = 'SimCLR'
-learning = "DTP"
+learning_rule = 'DTP'
 
 def main():
     model = builder.NetDTP(batch_size, step_size1, step_size2, device, loss_param, sigma, lr_targ, loss=SS_loss)
