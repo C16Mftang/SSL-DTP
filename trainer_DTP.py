@@ -21,7 +21,7 @@ batch_size = 2000
 step_size1 = .001
 step_size2 = .0002
 loss_param = {
-    "tau": 0.1,
+    "tau": 0.5,
     "margin": 4,
     "margin_pos": -2,
     "margin_neg": -2,
